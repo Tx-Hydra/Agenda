@@ -45,6 +45,7 @@ void agregartarea(tarea tar){
         std::cout << "Error al abrir archivo\n";
         return;
     }
+    agregar << tar.tareas << "|" << tar.completada << "\n";
 }
 
 
@@ -67,7 +68,7 @@ void actualziartarea(){
 
 
     int i;
-    std::cout << "Que tarea actualizar? ";
+    std::cout << "Que tarea actualizar? \n R: ";
     std::cin >> i;
     if(lista[i].completada)
         lista[i].completada = false;
@@ -80,6 +81,47 @@ void actualziartarea(){
         archivo2 << t.tareas << "|" << (t.completada ? 1 : 0) << "\n";
     }
 }
+
+
+void borrartarea(int tareaborrada){
+    std::ifstream borrar("Tareas.txt");
+    std::ofstream temp("temp.txt");
+
+    if (!borrar.is_open()) {
+        std::cout << "Error al abrir el archivo\n";
+        return;
+    }
+
+    std::string linea;
+    int contador = 0;
+    bool eliminada = false;
+
+    while (std::getline(borrar, linea)) {
+        if (contador == tareaborrada) {
+            eliminada = true;
+        } else {
+            temp << linea << "\n";
+        }
+        contador++;
+    }
+
+    borrar.close();
+    temp.close();
+
+    if (remove("Tareas.txt") != 0) {
+    std::cout << "Error al eliminar archivo original\n";
+    return;
+    }
+    if (rename("temp.txt", "Tareas.txt") != 0) {
+        std::cout << "Error al renombrar archivo\n";
+        return;
+    }
+
+    if (eliminada)
+        std::cout << "Tarea eliminada correctamente\n";
+    else
+        std::cout << "Numero de linea invalido\n";
+} 
 
 
 
@@ -113,7 +155,7 @@ void vertareas() {
 int main(){
     tarea tar;
     int opc = 1;
-    int opc2;
+    int opc2 = 0;
     std::ifstream Lista;
     crearlista();
     while(opc != 2){
@@ -129,9 +171,8 @@ int main(){
         }
         switch (opc){
         case 1:
-            while (opc2 != 4){
-                std::ifstream Lista("Tareas.txt", std::ios::app);    
-                std::cout<<"1- Crear Tarea    2- Ver Tareas    3- Actualizar Tarea    4- Cerrar\n";
+            while (opc2 != 5){    
+                std::cout<<"1- Crear Tarea    2- Ver Tareas    3- Actualizar Tarea\n         4- Borrar Tarea    5- Borrar Tarea\n";
                 std::cout<<"R: ";
                 std::cin>>opc2;
                 if (std::cin.fail()){
@@ -152,6 +193,12 @@ int main(){
                         actualziartarea();
                         continue;
                     case 4:
+                        int tareaborrada;
+                        std::cout<<"Indique tarea a borrar: ";
+                        std::cin>>tareaborrada;
+                        borrartarea(tareaborrada);
+                        continue;
+                    case 5:
                         opc = 2;
                         break;
                     default:

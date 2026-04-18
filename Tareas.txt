@@ -1,0 +1,4 @@
+|0
+Pan|0
+Ducha|0
+Dormir|1
